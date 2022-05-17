@@ -1,0 +1,5 @@
+project: rnshah9/duplicut
+target: duplicut
+
+cmds:
+  - cmd: /repo/duplicut @@ --outfile out
