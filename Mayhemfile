@@ -2,4 +2,4 @@ project: duplicut
 target: duplicut
 
 cmds:
-  - cmd: /repo/duplicut @@ --outfile out
+  - cmd: /install/duplicut @@ --outfile out
