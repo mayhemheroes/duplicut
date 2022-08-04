@@ -101,10 +101,13 @@ void        cleanout_chunk(t_chunk *chunk)
     long    slot;
     char    *base_ptr;
     int     i;
+    long    duplicates;
 
+    duplicates = 0;
     i = 0;
     base_ptr = chunk->ptr;
-    while (get_next_line(&line, chunk))
+    size_t junk_lines = 0;
+    while (get_next_line(&line, chunk, &junk_lines))
     {
         slot = HASH(&line) % g_hmap.size;
         while (LINE_ISSET(g_hmap.ptr[slot]))
@@ -112,6 +115,7 @@ void        cleanout_chunk(t_chunk *chunk)
             if (cmp_line(&line, &g_hmap.ptr[slot]) == 0)
             {
                 LINE_ADDR(line)[0] = DISABLED_LINE;
+                ++duplicates;
                 break;
             }
             /* archaic open addressing collision resolver */
@@ -125,6 +129,8 @@ void        cleanout_chunk(t_chunk *chunk)
         }
     }
     set_status(TAGDUP_BYTES, (size_t)(chunk->ptr - base_ptr));
+    set_status(TAGDUP_DUPLICATES, (size_t)duplicates);
+    set_status(TAGDUP_JUNK_LINES, junk_lines);
     free(chunk);
     update_status(CTASK_DONE);
 }

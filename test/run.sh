@@ -6,7 +6,7 @@ _PROGRAM="./duplicut"
 _MAIN_DIR="./test"
 _TESTS_DIR="$_MAIN_DIR/tests"
 
-_DEFAULT_ARCH="x86 x64"
+_DEFAULT_ARCH="x64"
 
 _DEFAULT_TEST=$(find "$_TESTS_DIR" -maxdepth 1 -type f  \
                 -name '*.sh' -exec basename {} ';')
@@ -41,23 +41,10 @@ function die ()
 function build_program ()
 {
     local _arch="$1"
-    local buildscript="$_MAIN_DIR/build.sh"
-
     case "$_arch" in
-        "x86")
-            export FLAGS="-m32"
-            $buildscript \
-                || die "Failed to compile"
-
-            fileinfo="$(file -b "$_PROGRAM" 2>&1)"
-            grep -qv "x86.64" <<< "$fileinfo" \
-                || die "Bad filetype: $_PROGRAM: $fileinfo"
-
-            ;;
         "x64")
             export FLAGS=""
-            $buildscript \
-                || die "Failed to compile"
+            make coverage || die "Could not compile"
 
             fileinfo="$(file -b "$_PROGRAM" 2>&1)"
             grep -q "x86.64" <<< "$fileinfo" \
@@ -65,7 +52,7 @@ function build_program ()
 
             ;;
         *)
-            die "Invalid architecture: $_arch"
+            die "Bad arch: $_arch"
             ;;
     esac
 }
@@ -86,6 +73,7 @@ function execute_scripts () {
             print_good "$1 succeeded"
         else
             print_bad "$1 failed !"
+            exit 1
             (( ++errors ))
         fi
         echo -e "\n"
@@ -94,7 +82,7 @@ function execute_scripts () {
 }
 
 #
-# # example: run_single_test "x86" "build.sh"
+# # example: run_single_test "x64" "build.sh"
 # function run_single_test ()
 # {
 #     local testscript="$_TESTS_DIR/$1"

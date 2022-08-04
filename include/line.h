@@ -28,21 +28,9 @@ typedef size_t  t_line;
 # define SET_LINE(ln, ptr, sz)  (ln = ((((uintptr_t)ptr) << 8) + (uint8_t)sz))
 
 #else
-/** Fallback to standard structure for 32 bits architectures.
- */
-
-typedef struct  s_line
-{
-    char        *addr;
-    int         size;
-}               t_line;
-# define LINE_ISSET(ln)         ((ln).addr != NULL)
-# define LINE_SIZE(ln)          ((ln).size)
-# define LINE_ADDR(ln)          ((ln).addr)
-# define SET_LINE(ln, ptr, sz)  (ln).addr = ptr; (ln).size = sz
-
+# error "not x64 arch (__SIZEOF_POINTER__ != 8)"
 #endif
 
 /* source file: line.c */
-bool    get_next_line(t_line *dst, t_chunk *chunk);
+bool    get_next_line(t_line *dst, t_chunk *chunk, size_t *junk_lines);
 int     cmp_line(t_line *l1, t_line *l2);
