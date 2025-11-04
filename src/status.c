@@ -275,7 +275,7 @@ void    display_status(int finished)
     char            s_cur_task[BUF_SIZE];
     const time_t    t_elapsed = time(NULL) - START_TIME();
     time_t          t_remaining = 0;
-    double          progress;
+    double          progress = 0;
 
     if (!g_status.fcopy_bytes || t_elapsed < 1)
         return; // only display after 1st second
